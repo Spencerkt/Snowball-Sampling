@@ -2,6 +2,7 @@ import sys
 import networkx as nx
 import pandas as pd
 import numpy as np
+import file_writer as fw 
 from snowballsampling import randomseed 
 from snowballsampling import snowballsampling 
 from snowballsampling import surroundings 
@@ -40,18 +41,24 @@ def build_graph(path):
 
 
 if __name__ == "__main__":
+    """
+    For movielens dataset, we need the following files.
+    """
+    rating_path = './data/movielens/ratings_filtered.txt'
+    movie_path = './data/movielens/movies_filtered.txt'
+    users_path = './data/movielens/users_filtered.txt'
+    user_sim_path = './data/movielens/users_similarity.txt'
+    movie_sim_path = './data/movielens/movies_similarity.txt'
 
-    dataset_path = sys.argv[1]
-    print 'reading graph from ' + dataset_path
+    print 'reading graph from ' + rating_path
+    graph = build_graph(rating_path)
 
-    graph = build_graph(dataset_path)
-
-    num_users = 5
+    starting_points = 5   # 5 seems to be about the right size. 
     samples = []    
 
-    print '\nsampling for {} users'.format(num_users)
+    print '\nsampling for {} users'.format(starting_points)
 
-    for i in range(num_users):
+    for i in range(starting_points):
         rand_node = randomseed(graph)
         subgraph = snowballsampling(graph, rand_node, maxsize=200)
         samples.append(subgraph)
@@ -70,7 +77,18 @@ if __name__ == "__main__":
             movies.append(n)
 
     print 'users => {}'.format(len(users))
-    print 'movies => {}'.format(len(movies))
+    print 'movies => {}\n\n'.format(len(movies))
+
+    users = [int(u.replace('user_', '')) for u in users]
+    movies = [int(m.replace('movie_', '')) for m in movies]
+
+    print 'writing data files.'
+    fw.write_movies(movie_path, movies)
+    fw.write_users(users_path, users)
+    fw.write_ratings(rating_path, users, movies)
+    fw.write_user_sim(user_sim_path, users)
+    fw.write_movie_sim(movie_sim_path, movies)
+    print 'done!'
 
 
 
