@@ -26,7 +26,8 @@ def build_graph(path):
 
     users = ['user_{}'.format(i) for i in graph_df.user_id.tolist()]
     movies = ['movie_{}'.format(i) for i in graph_df.movie_id.tolist()]
-    links = [(r.user_id, r.movie_id) for _, r in graph_df.iterrows()]
+    links = [('user_{}'.format(r.user_id), 'movie_{}'.format(r.movie_id)) 
+                    for _, r in graph_df.iterrows()]
 
     G.add_nodes_from(users)
     G.add_nodes_from(movies)
@@ -45,21 +46,31 @@ if __name__ == "__main__":
 
     graph = build_graph(dataset_path)
 
-    num_users = 10
+    num_users = 5
     samples = []    
 
     print '\nsampling for {} users'.format(num_users)
 
     for i in range(num_users):
         rand_node = randomseed(graph)
-        subgraph = snowballsampling(graph, rand_node, maxsize=50)
+        subgraph = snowballsampling(graph, rand_node, maxsize=200)
         samples.append(subgraph)
         print '\tdone with {}th sample'.format(i + 1)
 
-    sampled_nodes = np.unique([s.nodes() for s in samples])
-    print '\nsample results:'
-    print sampled_nodes.shape
-    print sampled_nodes
+    sampled_nodes = list(np.unique(samples))
+    print '\n\nsampled nodes => {}'.format(len(sampled_nodes))
+    
+    users = []
+    movies  = []
+
+    for n in sampled_nodes:
+        if 'user_' in str(n):
+            users.append(n)
+        else:
+            movies.append(n)
+
+    print 'users => {}'.format(len(users))
+    print 'movies => {}'.format(len(movies))
 
 
 
