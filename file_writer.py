@@ -1,7 +1,7 @@
-import pandas as pd 
-import numpy as np 
+import pandas as pd
+import numpy as np
 
-path = './data/sample_5/{}'
+path = './data/sample_1/{}'
 
 def write_movies(movie_path, movies):
     """
@@ -39,10 +39,10 @@ def write_movies(movie_path, movies):
                 if g.lower() == 'musical':
                     isMusical_obs.write('{}\t{}\n'.format(row.movie_id, 1.0))
                 if g.lower() == 'sci-fi':
-                    isSciFi_obs.write('{}\t{}\n'.format(row.movie_id, 1.0))                                                                            
+                    isSciFi_obs.write('{}\t{}\n'.format(row.movie_id, 1.0))
 
     print 'Done writing movie files.'
-    return 
+    return
 
 
 def write_users(user_path, users):
@@ -61,10 +61,10 @@ def write_users(user_path, users):
     with open(path.format('isYoung_obs.txt'), 'w') as isYoung_obs, \
         open(path.format('isAdult_obs.txt'), 'w') as isAdult_obs, \
         open(path.format('isElderly_obs.txt'), 'w') as isElderly_obs, \
-        open(path.format('isFemale_obs.txt'), 'w') as isFemale_obs:
+        open(path.format('Gender_obs.txt'), 'w') as Gender_obs:
         for _, row in sampled_users.iterrows():
-            if row.gender == 'F' or row.gender == 'f':
-                isFemale_obs.write('{}\t{}\n'.format(row.user_id, 1.0))
+            Gender_obs.write('{}\t{}\t{}\n'.format(row.user_id, row.gender, 1.0))
+
             if row.age < 18:
                 isYoung_obs.write('{}\t{}\n'.format(row.user_id, 1.0))
             if row.age >= 18 and row.age < 50:
@@ -98,13 +98,13 @@ def write_ratings(rating_path, users, movies):
 
     rating_obs['obs'] = 1.0
     rating_obs[['user_id', 'movie_id', 'obs']].to_csv(path.format('Rating_obs.txt'), sep='\t', index=False, header=None)
-    
+
     rating_tt['obs'] = 1.0
     rating_tt[['user_id', 'movie_id', 'obs']].to_csv(path.format('Rating_truth.txt'), sep='\t', index=False, header=None)
     rating_tt[['user_id', 'movie_id']].to_csv(path.format('Rating_target.txt'), sep='\t', index=False, header=None)
 
     print 'Done writing rating files. '
-    return 
+    return
 
 
 def write_user_sim(sim_path, users):
@@ -119,7 +119,7 @@ def write_user_sim(sim_path, users):
 
     sampled_sim.to_csv(path.format('User_sim_obs.txt'), sep='\t', index=False, header=None)
     print 'Done writing user similarities.'
-    return 
+    return
 
 
 def write_movie_sim(sim_path, movies):
@@ -134,4 +134,4 @@ def write_movie_sim(sim_path, movies):
 
     sampled_sim.to_csv(path.format('Movie_sim_obs.txt'), sep='\t', index=False, header=None)
     print 'Done writing movie similarities.'
-    return 
+    return

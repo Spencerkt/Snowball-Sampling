@@ -2,10 +2,10 @@ import sys
 import networkx as nx
 import pandas as pd
 import numpy as np
-import file_writer as fw 
-from snowballsampling import randomseed 
-from snowballsampling import snowballsampling 
-from snowballsampling import surroundings 
+import file_writer as fw
+from snowballsampling import randomseed
+from snowballsampling import snowballsampling
+from snowballsampling import surroundings
 
 
 def show_graph_stats(df):
@@ -15,7 +15,7 @@ def show_graph_stats(df):
     print 'num ratings = {}'.format(df.shape[0])
     avg = df[['user_id', 'movie_id']].groupby('user_id').count().mean().values[0]
     print 'avg num ratings per user = {}\n'.format(avg)
-    return 
+    return
 
 
 def build_graph(path):
@@ -27,7 +27,7 @@ def build_graph(path):
 
     users = ['user_{}'.format(i) for i in graph_df.user_id.tolist()]
     movies = ['movie_{}'.format(i) for i in graph_df.movie_id.tolist()]
-    links = [('user_{}'.format(r.user_id), 'movie_{}'.format(r.movie_id)) 
+    links = [('user_{}'.format(r.user_id), 'movie_{}'.format(r.movie_id))
                     for _, r in graph_df.iterrows()]
 
     G.add_nodes_from(users)
@@ -53,8 +53,8 @@ if __name__ == "__main__":
     print 'reading graph from ' + rating_path
     graph = build_graph(rating_path)
 
-    starting_points = 5   # 5 seems to be about the right size. 
-    samples = []    
+    starting_points = 1   # 5 seems to be about the right size.
+    samples = []
 
     print '\nsampling for {} users'.format(starting_points)
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     sampled_nodes = list(np.unique(samples))
     print '\n\nsampled nodes => {}'.format(len(sampled_nodes))
-    
+
     users = []
     movies  = []
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
 
 
-    
+
 
 
 
