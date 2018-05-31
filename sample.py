@@ -44,16 +44,16 @@ if __name__ == "__main__":
     """
     For movielens dataset, we need the following files.
     """
-    rating_path = './data/movielens/ratings_filtered.txt'
-    movie_path = './data/movielens/movies_filtered.txt'
-    users_path = './data/movielens/users_filtered.txt'
-    user_sim_path = './data/movielens/users_similarity.txt'
-    movie_sim_path = './data/movielens/movies_similarity.txt'
+    rating_path = './data/movielens/ratings_filtered_all.txt'
+    movie_path = './data/movielens/movies_filtered_all.txt'
+    users_path = './data/movielens/users_filtered_all.txt'
+    user_sim_path = './data/movielens/user_similarities_all.csv'
+    movie_sim_path = './data/movielens/movie_similarities_all.csv'
 
     print 'reading graph from ' + rating_path
     graph = build_graph(rating_path)
 
-    starting_points = 1   # 5 seems to be about the right size.
+    starting_points = 5   # 5 seems to be about the right size.
     samples = []
 
     print '\nsampling for {} users'.format(starting_points)
