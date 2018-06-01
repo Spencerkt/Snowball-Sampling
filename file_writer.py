@@ -22,9 +22,17 @@ def write_movies(movie_path, movies):
             y = row.title.split(' ')[-1].replace('(', '').replace(')', '')
             year_obs.write('{}\t{}\t{}\n'.format(row.movie_id, y, 1.0))
             for g in row.genres.split('|'):
-                if g.lower() in genres:
-                    Genre_obs.write('{}\t{}\t{}\n'.format(row.movie_id, g, 1.0))
-
+                if g.lower() == 'action':
+                    Genre_obs.write('{}\t{}\t{}\n'.format(row.movie_id, 0, 1.0))
+                elif g.lower() == 'romance':
+                    Genre_obs.write('{}\t{}\t{}\n'.format(row.movie_id, 1, 1.0))
+                elif g.lower() == 'crime':
+                    Genre_obs.write('{}\t{}\t{}\n'.format(row.movie_id, 2, 1.0))
+                elif g.lower() == 'musical':
+                    Genre_obs.write('{}\t{}\t{}\n'.format(row.movie_id, 3, 1.0))
+                elif g.lower() == 'sci-fi':
+                    Genre_obs.write('{}\t{}\t{}\n'.format(row.movie_id, 4, 1.0))
+                                                            
     print 'Done writing movie files.'
     return
 
@@ -43,14 +51,17 @@ def write_users(user_path, users):
     with open(path.format('Age_obs.txt'), 'w') as Age_obs, \
         open(path.format('Gender_obs.txt'), 'w') as Gender_obs:
         for _, row in sampled_users.iterrows():
-            Gender_obs.write('{}\t{}\t{}\n'.format(row.user_id, row.gender, 1.0))
+            if row.gender.lower() == 'm':
+                Gender_obs.write('{}\t{}\t{}\n'.format(row.user_id, 1, 1.0))
+            elif row.gender.lower() == 'f':
+                Gender_obs.write('{}\t{}\t{}\n'.format(row.user_id, 0, 1.0))
 
             if row.age < 18:
-                Age_obs.write('{}\t{}\t{}\n'.format(row.user_id, 'Young', 1.0))
-            if row.age >= 18 and row.age < 50:
-                Age_obs.write('{}\t{}\t{}\n'.format(row.user_id, 'Adult', 1.0))
-            if row.age >= 50:
-                Age_obs.write('{}\t{}\t{}\n'.format(row.user_id, 'Old', 1.0))
+                Age_obs.write('{}\t{}\t{}\n'.format(row.user_id, 0, 1.0))
+            elif row.age >= 18 and row.age < 50:
+                Age_obs.write('{}\t{}\t{}\n'.format(row.user_id, 1, 1.0))
+            elif row.age >= 50:
+                Age_obs.write('{}\t{}\t{}\n'.format(row.user_id, 2, 1.0))
 
     print 'Done writing user files.'
     return
@@ -93,11 +104,14 @@ def write_user_sim(sim_path, users):
     """
     sim_df = pd.read_csv(sim_path, header=None)
     sim_df.columns = ['u1', 'u2', 'sim']
-
+    
     sampled_sim = sim_df.loc[sim_df.u1.isin(users)]
     sampled_sim = sampled_sim.loc[sampled_sim.u2.isin(users)]
 
     sampled_sim.to_csv(path.format('User_sim_obs.txt'), sep='\t', index=False, header=None)
+
+    top_10 = sampled_sim.groupby('u1').apply(lambda x: x.nlargest(10, 'sim'))
+    top_10.to_csv(path.format('User_sim_obs_top10.txt'), sep='\t', index=False, header=None)
     print 'Done writing user similarities.'
     return
 
@@ -113,5 +127,10 @@ def write_movie_sim(sim_path, movies):
     sampled_sim = sampled_sim.loc[sampled_sim.m2.isin(movies)]
 
     sampled_sim.to_csv(path.format('Movie_sim_obs.txt'), sep='\t', index=False, header=None)
+
+    top_10 = sampled_sim.groupby('m1').apply(lambda x: x.nlargest(10, 'sim'))
+    top_10.to_csv(path.format('Movie_sim_obs_top10.txt'), sep='\t', index=False, header=None)
     print 'Done writing movie similarities.'
     return
+
+
